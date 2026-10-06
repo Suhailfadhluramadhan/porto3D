@@ -651,7 +651,7 @@ export function WalkingCharacter() {
               background: "rgba(0,0,0,0.75)",
               padding: "12px 16px",
               borderRadius: "10px",
-              minWidth: "240px",
+              minWidth: "40px",
             }}
           >
             <div

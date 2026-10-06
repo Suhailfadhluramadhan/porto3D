@@ -1,9 +1,10 @@
-import { useEffect, createContext } from "react";
+import { useEffect } from "react";
 import AnimationPage from "./3Dpage/AnimationPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import HomePage from "./Home/HomePage.jsx";
+import { Darkmode } from "./context/DarkmodeContext.js";
 
 
 
@@ -37,8 +38,6 @@ function Kontak() {
     </>
   );
 }
-
-export const Darkmode = createContext(null);
 
 function App() {
   const [toggle, setToggle] = useState(() => {

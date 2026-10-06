@@ -5,14 +5,16 @@ import { FlyingDragon } from "../assets/Dragon.jsx";
 import { ControlButton } from "./ControlButton.jsx";
 import { GridNumbers } from "./GridNumbers.jsx";
 import Cest from "../assets/Cest.jsx";
+import { ProfileModal } from "../Home/ProfileModal.jsx";
 import Tree from "../assets/Tree.jsx";
 import Farmer from "../assets/Farmer.jsx";
 import StoneGirl from "../assets/StoneGirl.jsx";
 import CloudLooper from "../assets/CloudAnimation.jsx";
 import CloudLayer from "../assets/Cloud.jsx";
 import Switch from "../assets/Toggle.jsx";
+import Moon from "../assets/Moon.jsx";
 import { useContext, Suspense, useState, useEffect } from "react";
-import { Darkmode } from "../App.jsx";
+import { Darkmode } from "../context/DarkmodeContext.js";
 import {
   FaArrowRight,
   FaArrowLeft,
@@ -25,7 +27,7 @@ function Island(props) {
   return <primitive object={scene} {...props} />;
 }
 
-// Terminal Loading Screen Component
+
 function TerminalLoader({ progress }) {
   const [logs, setLogs] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
@@ -77,7 +79,7 @@ function TerminalLoader({ progress }) {
       fontFamily: '"Courier New", monospace',
       padding: '20px'
     }}>
-      {/* Terminal Window */}
+      
       <div style={{
         width: '600px',
         maxWidth: '90vw',
@@ -87,7 +89,7 @@ function TerminalLoader({ progress }) {
         boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
         overflow: 'hidden'
       }}>
-        {/* Terminal Header */}
+        
         <div style={{
           background: '#16171d',
           padding: '12px 16px',
@@ -104,7 +106,7 @@ function TerminalLoader({ progress }) {
           </span>
         </div>
         
-        {/* Terminal Body */}
+        
         <div style={{
           padding: '20px',
           minHeight: '300px',
@@ -134,7 +136,7 @@ function TerminalLoader({ progress }) {
             </div>
           ))}
           
-          {/* Progress Bar */}
+         
           {progress > 0 && (
             <div style={{ marginTop: '20px' }}>
               <div style={{
@@ -186,14 +188,14 @@ function TerminalLoader({ progress }) {
   );
 }
 
-// Progress Tracker Component - tracks loading inside Canvas
+
 function LoadingTracker({ onLoadComplete }) {
   const { active, progress } = useProgress();
   
   useEffect(() => {
-    // When progress reaches 100% and nothing is loading anymore
+    
     if (progress === 100 && !active) {
-      // Add delay to show "Done" message
+    
       const timer = setTimeout(() => {
         onLoadComplete();
       }, 1000);
@@ -204,22 +206,24 @@ function LoadingTracker({ onLoadComplete }) {
   return null;
 }
 
-// Scene Content Component
-function SceneContent({ toggle, onLoadComplete }) {
+
+function SceneContent({ onLoadComplete, isProfileOpen, onProfileOpen }) {
   return (
     <>
       <LoadingTracker onLoadComplete={onLoadComplete} />
       <group position={[10, 15, 0]}>
         <Island scale={0.3} />
         <WalkingCharacter />
-        <Cest />
+        <Cest isProfileOpen={isProfileOpen} onProfileOpen={onProfileOpen} />
         <Tree />
         <Farmer />
         <StoneGirl />
         <FlyingDragon />
         <CloudLooper direction="right-to-left" />
         <CloudLooper direction="left-to-right" />
+        <Moon />
       </group>
+     
     </>
   );
 }
@@ -237,10 +241,48 @@ const styles = {
   },
 };
 
+const DESKTOP_BREAKPOINT = 1024;
+
+const MOBILE_CAMERA = { position: [50, 60, 90], fov: 50 };
+const DESKTOP_CAMERA = { position: [42, 50, 78], fov: 35 };
+
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(
+    () => window.innerWidth >= DESKTOP_BREAKPOINT
+  );
+
+  useEffect(() => {
+    const onResize = () =>
+      setIsDesktop(window.innerWidth >= DESKTOP_BREAKPOINT);
+
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  return isDesktop;
+}
+
+function ResponsiveCamera({ position, fov }) {
+  const { camera } = useThree();
+
+  useEffect(() => {
+    camera.position.set(...position);
+    if (camera.isPerspectiveCamera) {
+      camera.fov = fov;
+      camera.updateProjectionMatrix();
+    }
+  }, [camera, position, fov]);
+
+  return null;
+}
+
 export default function AnimationPage() {
   const { toggle, setToggle } = useContext(Darkmode);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
+  const [showProfile, setShowProfile] = useState(false);
+  const isDesktop = useIsDesktop();
+  const cameraConfig = isDesktop ? DESKTOP_CAMERA : MOBILE_CAMERA;
   
   const handleLoadComplete = () => {
     setIsLoaded(true);
@@ -248,10 +290,10 @@ export default function AnimationPage() {
   
   return (
     <>
-      {/* Show terminal loader until everything is ready */}
+      
       {!isLoaded && <TerminalLoader progress={loadProgress} />}
       
-      {/* Main content */}
+      
       <div style={{ 
         opacity: isLoaded ? 1 : 0, 
         transition: 'opacity 0.8s ease',
@@ -262,11 +304,11 @@ export default function AnimationPage() {
         </div>
 
         <Canvas
-          camera={{ position: [50, 60, 90], fov: 50 }}
+          camera={{ position: cameraConfig.position, fov: cameraConfig.fov }}
           style={{
             width: "100vw",
             height: "100vh",
-            backgroundImage: toggle ? 'url("/Skt.jpg")' : 'url("/mlm4.png")',
+            backgroundImage: toggle ? 'url("/Skt.jpg")' : 'url("/mlm2.jpg")',
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -312,6 +354,11 @@ export default function AnimationPage() {
             </>
           )}
 
+          <ResponsiveCamera
+            position={cameraConfig.position}
+            fov={cameraConfig.fov}
+          />
+
           <OrbitControls
             target={[10, 15, 5]}
             minDistance={30}
@@ -319,7 +366,11 @@ export default function AnimationPage() {
           />
 
           <Suspense fallback={null}>
-            <SceneContent toggle={toggle} onLoadComplete={handleLoadComplete} />
+            <SceneContent
+              onLoadComplete={handleLoadComplete}
+              isProfileOpen={showProfile}
+              onProfileOpen={() => setShowProfile(true)}
+            />
           </Suspense>
         </Canvas>
         
@@ -343,7 +394,7 @@ export default function AnimationPage() {
         </div>
       </div>
       
-      {/* Hidden canvas to track actual loading progress */}
+      
       {!isLoaded && (
         <Canvas style={{ position: 'absolute', width: 0, height: 0, visibility: 'hidden' }}>
           <Suspense fallback={null}>
@@ -351,11 +402,13 @@ export default function AnimationPage() {
           </Suspense>
         </Canvas>
       )}
+
+      {showProfile && <ProfileModal onClose={() => setShowProfile(false)} />}
     </>
   );
 }
 
-// Component to track progress for the loader
+
 function ProgressTracker({ setProgress }) {
   const { progress } = useProgress();
   
