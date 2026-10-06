@@ -300,6 +300,8 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useRef, useEffect, useState } from "react";
 
+const DIALOG_SCALE = 1.5;
+
 export function WalkingCharacter() {
   const { scene, animations } = useGLTF("/walking.glb");
   const { actions } = useAnimations(animations, scene);
@@ -616,6 +618,12 @@ export function WalkingCharacter() {
           textAlign: "center",
         }}
       >
+        <div
+          style={{
+            transform: `scale(${DIALOG_SCALE})`,
+            transformOrigin: "center",
+          }}
+        >
         {showDialog === "welcome" && (
           <div
             style={{
@@ -738,6 +746,7 @@ export function WalkingCharacter() {
             Silahkan klik patung batu di depan mu
           </div>
         )}
+        </div>
       </Html>
     </group>
   );

@@ -13,7 +13,7 @@ import CloudLooper from "../assets/CloudAnimation.jsx";
 import CloudLayer from "../assets/Cloud.jsx";
 import Switch from "../assets/Toggle.jsx";
 import Moon from "../assets/Moon.jsx";
-import { useContext, Suspense, useState, useEffect } from "react";
+import { useContext, Suspense, useState, useEffect, useCallback } from "react";
 import { Darkmode } from "../context/DarkmodeContext.js";
 import {
   FaArrowRight,
@@ -189,9 +189,13 @@ function TerminalLoader({ progress }) {
 }
 
 
-function LoadingTracker({ onLoadComplete }) {
+function LoadingTracker({ onLoadComplete, onProgress }) {
   const { active, progress } = useProgress();
-  
+
+  useEffect(() => {
+    onProgress?.(progress);
+  }, [progress, onProgress]);
+
   useEffect(() => {
     
     if (progress === 100 && !active) {
@@ -207,10 +211,9 @@ function LoadingTracker({ onLoadComplete }) {
 }
 
 
-function SceneContent({ onLoadComplete, isProfileOpen, onProfileOpen }) {
+function SceneContent({ isProfileOpen, onProfileOpen }) {
   return (
     <>
-      <LoadingTracker onLoadComplete={onLoadComplete} />
       <group position={[10, 15, 0]}>
         <Island scale={0.3} />
         <WalkingCharacter />
@@ -244,7 +247,7 @@ const styles = {
 const DESKTOP_BREAKPOINT = 1024;
 
 const MOBILE_CAMERA = { position: [50, 60, 90], fov: 50 };
-const DESKTOP_CAMERA = { position: [42, 50, 78], fov: 35 };
+const DESKTOP_CAMERA = { position: [42, 50, 78], fov: 20 };
 
 function useIsDesktop() {
   const [isDesktop, setIsDesktop] = useState(
@@ -287,6 +290,10 @@ export default function AnimationPage() {
   const handleLoadComplete = () => {
     setIsLoaded(true);
   };
+
+  const handleProgress = useCallback((value) => {
+    setLoadProgress(value);
+  }, []);
   
   return (
     <>
@@ -305,6 +312,8 @@ export default function AnimationPage() {
 
         <Canvas
           camera={{ position: cameraConfig.position, fov: cameraConfig.fov }}
+          dpr={[1, 1.5]}
+          gl={{ antialias: false, powerPreference: "high-performance" }}
           style={{
             width: "100vw",
             height: "100vh",
@@ -365,9 +374,13 @@ export default function AnimationPage() {
             maxDistance={100}
           />
 
+          <LoadingTracker
+            onLoadComplete={handleLoadComplete}
+            onProgress={handleProgress}
+          />
+
           <Suspense fallback={null}>
             <SceneContent
-              onLoadComplete={handleLoadComplete}
               isProfileOpen={showProfile}
               onProfileOpen={() => setShowProfile(true)}
             />
@@ -393,28 +406,8 @@ export default function AnimationPage() {
           </ControlButton>
         </div>
       </div>
-      
-      
-      {!isLoaded && (
-        <Canvas style={{ position: 'absolute', width: 0, height: 0, visibility: 'hidden' }}>
-          <Suspense fallback={null}>
-            <ProgressTracker setProgress={setLoadProgress} />
-          </Suspense>
-        </Canvas>
-      )}
 
       {showProfile && <ProfileModal onClose={() => setShowProfile(false)} />}
     </>
   );
-}
-
-
-function ProgressTracker({ setProgress }) {
-  const { progress } = useProgress();
-  
-  useEffect(() => {
-    setProgress(progress);
-  }, [progress, setProgress]);
-  
-  return null;
 }

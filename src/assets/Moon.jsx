@@ -32,7 +32,7 @@ function createGlowTexture() {
 }
 
 const MOON_SCALE = 0.03;
-const MOON_POSITION = [15, 20, -10];
+const MOON_POSITION = [15, 10, -10];
 
 export default function Moon() {
   const { scene } = useGLTF("/moon.glb");
@@ -86,7 +86,7 @@ return (
           width={16}
           depth={8}
           scale={1.5}
-          segments={16}
+          segments={8}
           opacity={0.5}
           color="#5c6b8f"
           speed={0.5}
@@ -96,7 +96,7 @@ return (
           width={13}
           depth={7}
           scale={1.4}
-          segments={16}
+          segments={8}
           opacity={1}
           color="#4e5c7d"
           speed={0.4}

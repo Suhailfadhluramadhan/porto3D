@@ -62,6 +62,7 @@ export default function CloudLooper({ direction = "right-to-left" }) {
         scale={2}
         color="#ffffff"
         opacity={0.3}
+        segments={8}
         position={[20, 6, 10]}
       />
       <Cloud
@@ -69,6 +70,7 @@ export default function CloudLooper({ direction = "right-to-left" }) {
         depth={12}
         color="#ffffff"
         opacity={0.33}
+        segments={8}
         position={[25, 4, 10]}
       />
       <Cloud
@@ -76,6 +78,7 @@ export default function CloudLooper({ direction = "right-to-left" }) {
         depth={10}
         color="#ffffff"
         opacity={0.4}
+        segments={8}
         position={[15, 6, 10]}
       />
     </group>
