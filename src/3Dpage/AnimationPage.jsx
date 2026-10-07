@@ -2,25 +2,19 @@ import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, useGLTF, useProgress } from "@react-three/drei";
 import { WalkingCharacter } from "../assets/CraterAnimation.jsx";
 import { FlyingDragon } from "../assets/Dragon.jsx";
-import { ControlButton } from "./ControlButton.jsx";
 import { GridNumbers } from "./GridNumbers.jsx";
 import Cest from "../assets/Cest.jsx";
 import { ProfileModal } from "../Home/ProfileModal.jsx";
+import { AboutModal } from "../About/AboutModal.jsx";
+import { ProjectModal } from "../Project/ProjectModal.jsx";
+import { KontakModal } from "../Kontak/KontakModal.jsx";
 import Tree from "../assets/Tree.jsx";
 import Farmer from "../assets/Farmer.jsx";
 import StoneGirl from "../assets/StoneGirl.jsx";
 import CloudLooper from "../assets/CloudAnimation.jsx";
 import CloudLayer from "../assets/Cloud.jsx";
-import Switch from "../assets/Toggle.jsx";
 import Moon from "../assets/Moon.jsx";
-import { useContext, Suspense, useState, useEffect, useCallback } from "react";
-import { Darkmode } from "../context/DarkmodeContext.js";
-import {
-  FaArrowRight,
-  FaArrowLeft,
-  FaArrowUp,
-  FaArrowDown,
-} from "react-icons/fa";
+import { Suspense, useState, useEffect, useCallback } from "react";
 
 function Island(props) {
   const { scene } = useGLTF("/IslandNew.glb");
@@ -211,16 +205,22 @@ function LoadingTracker({ onLoadComplete, onProgress }) {
 }
 
 
-function SceneContent({ isProfileOpen, onProfileOpen }) {
+function SceneContent({
+  isProfileOpen,
+  onProfileOpen,
+  onAboutOpen,
+  onProjectOpen,
+  onKontakOpen,
+}) {
   return (
     <>
       <group position={[10, 15, 0]}>
         <Island scale={0.3} />
         <WalkingCharacter />
         <Cest isProfileOpen={isProfileOpen} onProfileOpen={onProfileOpen} />
-        <Tree />
-        <Farmer />
-        <StoneGirl />
+        <Tree onOpen={onKontakOpen} />
+        <Farmer onOpen={onAboutOpen} />
+        <StoneGirl onOpen={onProjectOpen} />
         <FlyingDragon />
         <CloudLooper direction="right-to-left" />
         <CloudLooper direction="left-to-right" />
@@ -231,22 +231,9 @@ function SceneContent({ isProfileOpen, onProfileOpen }) {
   );
 }
 
-const styles = {
-  container: {
-    position: "absolute",
-    bottom: 30,
-    left: 30,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: "10px",
-    zIndex: 10,
-  },
-};
-
 const DESKTOP_BREAKPOINT = 1024;
 
-const MOBILE_CAMERA = { position: [50, 60, 90], fov: 50 };
+const MOBILE_CAMERA = { position: [50, 60, 90], fov: 30 };
 const DESKTOP_CAMERA = { position: [42, 50, 78], fov: 20 };
 
 function useIsDesktop() {
@@ -280,13 +267,15 @@ function ResponsiveCamera({ position, fov }) {
 }
 
 export default function AnimationPage() {
-  const { toggle, setToggle } = useContext(Darkmode);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
   const [showProfile, setShowProfile] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
+  const [showProject, setShowProject] = useState(false);
+  const [showKontak, setShowKontak] = useState(false);
   const isDesktop = useIsDesktop();
   const cameraConfig = isDesktop ? DESKTOP_CAMERA : MOBILE_CAMERA;
-  
+
   const handleLoadComplete = () => {
     setIsLoaded(true);
   };
@@ -306,10 +295,6 @@ export default function AnimationPage() {
         transition: 'opacity 0.8s ease',
         pointerEvents: isLoaded ? 'auto' : 'none'
       }}>
-        <div className="absolute top-5 right-5 z-50">
-          <Switch checked={toggle} onChange={setToggle} />
-        </div>
-
         <Canvas
           camera={{ position: cameraConfig.position, fov: cameraConfig.fov }}
           dpr={[1, 1.5]}
@@ -317,51 +302,27 @@ export default function AnimationPage() {
           style={{
             width: "100vw",
             height: "100vh",
-            backgroundImage: toggle ? 'url("/Skt.jpg")' : 'url("/mlm2.jpg")',
+            backgroundImage: 'url("/mlm2.jpg")',
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         >
-          {toggle ? (
-            <>
-              <fog attach="fog" args={["#e0e0e0", 60, 200]} />
-              <ambientLight intensity={0.8} color="#4a5a7a" />
-              <hemisphereLight
-                intensity={1}
-                skyColor="#3a4a6a"
-                groundColor="#2a2a3a"
-              />
-              <directionalLight
-                position={[20, 20, 10]}
-                intensity={1.2}
-                color="#6a7a9a"
-              />
-              <pointLight
-                position={[10, 30, 10]}
-                intensity={1}
-                color="#5a6a8a"
-              />
-            </>
-          ) : (
-            <>
-              <ambientLight intensity={0.6} color="#5a6fa8" />
-              <hemisphereLight
-                intensity={0.4}
-                skyColor="#1a1e2f"
-                groundColor="#0a0c14"
-              />
-              <directionalLight
-                position={[30, 50, 20]}
-                intensity={1}
-                color="#bcd2ff"
-              />
-              <pointLight
-                position={[10, 30, 10]}
-                intensity={0.5}
-                color="#8ab4ff"
-              />
-            </>
-          )}
+          <ambientLight intensity={0.6} color="#5a6fa8" />
+          <hemisphereLight
+            intensity={0.4}
+            skyColor="#1a1e2f"
+            groundColor="#0a0c14"
+          />
+          <directionalLight
+            position={[30, 50, 20]}
+            intensity={1}
+            color="#bcd2ff"
+          />
+          <pointLight
+            position={[10, 30, 10]}
+            intensity={0.5}
+            color="#8ab4ff"
+          />
 
           <ResponsiveCamera
             position={cameraConfig.position}
@@ -383,31 +344,18 @@ export default function AnimationPage() {
             <SceneContent
               isProfileOpen={showProfile}
               onProfileOpen={() => setShowProfile(true)}
+              onAboutOpen={() => setShowAbout(true)}
+              onProjectOpen={() => setShowProject(true)}
+              onKontakOpen={() => setShowKontak(true)}
             />
           </Suspense>
         </Canvas>
-        
-        <div style={styles.container}>
-          <ControlButton dir="forward" toggle={toggle}>
-            <FaArrowUp size={28} color={toggle ? "#000" : "#fff"} />
-          </ControlButton>
-
-          <div style={{ display: "flex", gap: "50px" }}>
-            <ControlButton dir="left" toggle={toggle}>
-              <FaArrowLeft size={28} color={toggle ? "#000" : "#fff"} />
-            </ControlButton>
-            <ControlButton dir="right" toggle={toggle}>
-              <FaArrowRight size={28} color={toggle ? "#000" : "#fff"} />
-            </ControlButton>
-          </div>
-          
-          <ControlButton dir="back" toggle={toggle}>
-            <FaArrowDown size={28} color={toggle ? "#000" : "#fff"} />
-          </ControlButton>
-        </div>
       </div>
 
       {showProfile && <ProfileModal onClose={() => setShowProfile(false)} />}
+      {showAbout && <AboutModal onClose={() => setShowAbout(false)} />}
+      {showProject && <ProjectModal onClose={() => setShowProject(false)} />}
+      {showKontak && <KontakModal onClose={() => setShowKontak(false)} />}
     </>
   );
 }

@@ -1,7 +1,8 @@
 import { Cloud, useGLTF, useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
+import Bat from "./Bat.jsx";
 
 function createGlowTexture() {
   const size = 256;
@@ -32,13 +33,36 @@ function createGlowTexture() {
 }
 
 const MOON_SCALE = 0.03;
-const MOON_POSITION = [15, 10, -10];
+const DESKTOP_BREAKPOINT = 1024;
+const MOON_POSITION_DESKTOP = [15, 10, -10];
+const MOON_POSITION_MOBILE = [5, 20, -10];
 
-export default function Moon() {
+export default function Moon({ position }) {
   const { scene } = useGLTF("/moon.glb");
   const map = useTexture("/textures/moon_baseColor.jpg");
   const moonRef = useRef();
   const glow = useMemo(createGlowTexture, []);
+  const [moonPos, setMoonPos] = useState(
+    position || (typeof window !== "undefined" && window.innerWidth >= DESKTOP_BREAKPOINT ? MOON_POSITION_DESKTOP : MOON_POSITION_MOBILE)
+  );
+
+  useEffect(() => {
+    if (position) {
+      setMoonPos(position);
+      return;
+    }
+
+    const updateMoonPos = () => {
+      setMoonPos(
+        window.innerWidth >= DESKTOP_BREAKPOINT
+          ? MOON_POSITION_DESKTOP
+          : MOON_POSITION_MOBILE
+      );
+    };
+
+    window.addEventListener("resize", updateMoonPos);
+    return () => window.removeEventListener("resize", updateMoonPos);
+  }, [position]);
 
   useEffect(() => {
     map.colorSpace = THREE.SRGBColorSpace;
@@ -62,8 +86,8 @@ export default function Moon() {
     moonRef.current.rotation.y += delta * 0.05;
   });
 
-return (
-    <group position={MOON_POSITION}>
+  return (
+    <group position={moonPos}>
       <group ref={moonRef}>
         <primitive object={scene} scale={MOON_SCALE} />
 
@@ -80,6 +104,10 @@ return (
       </group>
 
       <pointLight color="#bcd0ff" intensity={60} distance={40} decay={1.2} />
+
+      <Bat radius={5.5} phase={0} />
+      <Bat radius={7} speed={0.65} phase={2.1} />
+      <Bat radius={8.5} speed={0.4} phase={4.2} />
 
       <group position={[0, -2, 0]}>
         <Cloud
@@ -100,7 +128,7 @@ return (
           opacity={1}
           color="#4e5c7d"
           speed={0.4}
-          position={[-3, 0.6, -1]}
+          position={[-4, 0.6, -1]}
         />
       </group>
     </group>

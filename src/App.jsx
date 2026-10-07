@@ -1,10 +1,7 @@
-import { useEffect } from "react";
 import AnimationPage from "./3Dpage/AnimationPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import HomePage from "./Home/HomePage.jsx";
-import { Darkmode } from "./context/DarkmodeContext.js";
 
 
 
@@ -40,27 +37,16 @@ function Kontak() {
 }
 
 function App() {
-  const [toggle, setToggle] = useState(() => {
-    return JSON.parse(localStorage.getItem("myToggle")) ?? false;
-  });
-
-  useEffect(() => {
-    localStorage.setItem("myToggle", JSON.stringify(toggle));
-    console.log(toggle);
-  }, [toggle]);
-
   return (
-    <Darkmode.Provider value={{ toggle, setToggle }}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<AnimationPage />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/project" element={<Project />} />
-          <Route path="/kontak" element={<Kontak />} />
-        </Routes>
-      </BrowserRouter>
-    </Darkmode.Provider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<AnimationPage />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/project" element={<Project />} />
+        <Route path="/kontak" element={<Kontak />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

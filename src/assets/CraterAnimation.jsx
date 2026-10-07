@@ -302,6 +302,13 @@ import { useRef, useEffect, useState } from "react";
 
 const DIALOG_SCALE = 1.5;
 
+const LOOK_TARGETS = {
+  Home: [13, 0, 15],
+  Project: [2.3, 0, 16.7],
+  About: [10, 0, 4],
+  Contact: [3, 0, 5],
+};
+
 export function WalkingCharacter() {
   const { scene, animations } = useGLTF("/walking.glb");
   const { actions } = useAnimations(animations, scene);
@@ -441,24 +448,6 @@ export function WalkingCharacter() {
       action.paused = true; // awalnya idle
     }
   }, [actions, animations]);
-
-  useEffect(() => {
-    const handleDir = (e) => {
-      const dir = e.type.replace("move-", "");
-      setDirection((prev) => ({ ...prev, [dir]: e.detail }));
-    };
-
-    const dirs = ["forward", "back", "left", "right"];
-    dirs.forEach((dir) => {
-      window.addEventListener(`move-${dir}`, handleDir);
-    });
-
-    return () => {
-      dirs.forEach((dir) => {
-        window.removeEventListener(`move-${dir}`, handleDir);
-      });
-    };
-  }, []);
   // update animasi jalan / idle
   useEffect(() => {
     const name = animations[0]?.name;
@@ -477,6 +466,14 @@ export function WalkingCharacter() {
   }, [direction, path, actions, animations]);
 
   // movement manual & auto
+  // bubble "silahkan klik ..." muncul 5 detik lalu hilang
+  useEffect(() => {
+    if (!Object.hasOwn(LOOK_TARGETS, showDialog)) return;
+
+    const timer = setTimeout(() => setShowDialog(""), 5000);
+    return () => clearTimeout(timer);
+  }, [showDialog]);
+
   useFrame(() => {
     const character = characterRef.current;
     if (!character) return;
@@ -520,19 +517,14 @@ export function WalkingCharacter() {
 
         // kalau ini waypoint terakhir → hadapkan ke object sesuai menu
         if (path.length === 1 && selectedMenu) {
-          let lookTarget;
-          if (selectedMenu === "Home") {
-            lookTarget = new THREE.Vector3(13, 0, 15);
-          } else if (selectedMenu === "Project") {
-            lookTarget = new THREE.Vector3(2.3, 0, 16.7);
-          } else if (selectedMenu === "About") {
-            lookTarget = new THREE.Vector3(10, 0, 4);
-          } else if (selectedMenu === "Contact") {
-            lookTarget = new THREE.Vector3(3, 0, 5);
-          }
+          const lookTarget = LOOK_TARGETS[selectedMenu];
+
+          setShowDialog(selectedMenu);
 
           if (lookTarget) {
-            const dir = lookTarget.clone().sub(character.position);
+            const dir = new THREE.Vector3(...lookTarget).sub(
+              character.position
+            );
             const angle = Math.atan2(dir.x, dir.z);
             character.rotation.y = angle;
           }
@@ -544,9 +536,7 @@ export function WalkingCharacter() {
   // klik menu → set path sesuai logika
   const handleMenuClick = (menu) => {
     setSelectedMenu(menu);
-    setShowDialog(menu);
-
-    setTimeout(() => setShowDialog(""), 5000);
+    setShowDialog("");
 
     const currentZ = characterRef.current.position.z;
     let waypoints = [];
