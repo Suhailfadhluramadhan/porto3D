@@ -1,6 +1,7 @@
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { useRef, useEffect } from "react";
 import * as THREE from "three";
+useGLTF.preload("/Chest.glb");
 
 export default function Cest({ isProfileOpen = false, onProfileOpen }) {
   const chestRef = useRef();

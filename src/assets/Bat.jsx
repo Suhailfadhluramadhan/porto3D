@@ -2,6 +2,7 @@ import { useGLTF, useAnimations } from "@react-three/drei";
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
+useGLTF.preload("/bat.glb");
 
 const BAT_SCALE = 0.3;
 const ORBIT_RADIUS = 6;

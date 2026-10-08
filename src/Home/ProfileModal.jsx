@@ -3,7 +3,7 @@ import Modal from "../Modal/Modal.jsx";
 
 export function ProfileModal({ onClose }) {
   return (
-    <Modal onClose={onClose}>
+    <Modal onClose={onClose} maxWidth="w-full">
       <HomeContent />
     </Modal>
   );

@@ -20,7 +20,7 @@ export function KontakContent() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="flex flex-1 flex-col justify-center space-y-8">
       <header>
         <p className="font-mono text-xs tracking-widest text-emerald-400 sm:text-sm">
           CONTACT

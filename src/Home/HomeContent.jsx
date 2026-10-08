@@ -15,7 +15,7 @@ export function HomeContent() {
   const photoSize = "h-40 w-40 sm:h-48 sm:w-48 lg:h-64 lg:w-64";
 
   return (
-    <div className="flex flex-col items-center gap-7 text-center md:flex-row md:items-center md:gap-12 md:text-left">
+    <div className="flex flex-1 flex-col items-center justify-center gap-7 text-center md:flex-row md:items-center md:gap-12 md:text-left border-white">
       <div className="relative shrink-0">
         <div className="absolute -inset-3 rounded-full bg-emerald-500/25 blur-2xl" />
         {!photoError && (

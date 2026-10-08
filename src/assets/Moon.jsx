@@ -3,6 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import Bat from "./Bat.jsx";
+useGLTF.preload("/moon.glb");
 
 function createGlowTexture() {
   const size = 256;

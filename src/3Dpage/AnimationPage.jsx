@@ -211,12 +211,13 @@ function SceneContent({
   onAboutOpen,
   onProjectOpen,
   onKontakOpen,
+  hideDialog,
 }) {
   return (
     <>
       <group position={[10, 15, 0]}>
         <Island scale={0.3} />
-        <WalkingCharacter />
+        <WalkingCharacter hideDialog={hideDialog} />
         <Cest isProfileOpen={isProfileOpen} onProfileOpen={onProfileOpen} />
         <Tree onOpen={onKontakOpen} />
         <Farmer onOpen={onAboutOpen} />
@@ -236,7 +237,7 @@ const DESKTOP_BREAKPOINT = 1024;
 const MOBILE_CAMERA = { position: [50, 60, 90], fov: 30 };
 const DESKTOP_CAMERA = { position: [42, 50, 78], fov: 20 };
 
-function useIsDesktop() {
+export function useIsDesktop() {
   const [isDesktop, setIsDesktop] = useState(
     () => window.innerWidth >= DESKTOP_BREAKPOINT
   );
@@ -275,6 +276,7 @@ export default function AnimationPage() {
   const [showKontak, setShowKontak] = useState(false);
   const isDesktop = useIsDesktop();
   const cameraConfig = isDesktop ? DESKTOP_CAMERA : MOBILE_CAMERA;
+  const isAnyModalOpen = showProfile || showAbout || showProject || showKontak;
 
   const handleLoadComplete = () => {
     setIsLoaded(true);
@@ -347,6 +349,7 @@ export default function AnimationPage() {
               onAboutOpen={() => setShowAbout(true)}
               onProjectOpen={() => setShowProject(true)}
               onKontakOpen={() => setShowKontak(true)}
+              hideDialog={isAnyModalOpen}
             />
           </Suspense>
         </Canvas>

@@ -31,7 +31,7 @@ const experiences = [
 
 export function AboutContent() {
   return (
-    <div className="space-y-9">
+    <div className="flex flex-1 flex-col justify-center space-y-9">
       <header>
         <p className="font-mono text-xs tracking-widest text-emerald-400 sm:text-sm">
           ABOUT ME

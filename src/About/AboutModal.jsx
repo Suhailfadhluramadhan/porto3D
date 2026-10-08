@@ -3,7 +3,7 @@ import { AboutContent } from "./AboutContent.jsx";
 
 export function AboutModal({ onClose }) {
   return (
-    <Modal onClose={onClose}>
+    <Modal onClose={onClose} maxWidth="w-full">
       <AboutContent />
     </Modal>
   );

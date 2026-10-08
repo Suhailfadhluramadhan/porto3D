@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 
-export default function Modal({ onClose, children, maxWidth = "max-w-5xl" }) {
+export default function Modal({ onClose, children, maxWidth = "max-w-[95vw]" }) {
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -21,11 +21,11 @@ export default function Modal({ onClose, children, maxWidth = "max-w-5xl" }) {
   return createPortal(
     <div
       onClick={onClose}
-      className="fixed inset-0 z-[9998] flex overflow-y-auto overscroll-contain bg-[#0a0e27]/95 p-5 backdrop-blur-sm sm:p-8"
+      className="fixed inset-0 z-[9998] flex overflow-y-auto overscroll-contain bg-amber-50/60 backdrop-blur-sm"
     >
       <div
         onClick={(event) => event.stopPropagation()}
-        className={`relative m-auto w-full ${maxWidth} rounded-3xl border border-white/10 bg-[#12172f] p-7 text-slate-200 shadow-2xl sm:p-10 lg:p-14`}
+        className={`relative m-auto flex h-full w-full ${maxWidth} flex-col overflow-y-auto  border border-white/10 bg-[#12172f] p-7 text-slate-200 shadow-2xl sm:p-10 lg:p-14`}
       >
         <button
           type="button"
@@ -36,9 +36,11 @@ export default function Modal({ onClose, children, maxWidth = "max-w-5xl" }) {
           ✕
         </button>
 
-        {children}
+        <div className="m-auto flex min-h-full w-full flex-col">
+          {children}
+        </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

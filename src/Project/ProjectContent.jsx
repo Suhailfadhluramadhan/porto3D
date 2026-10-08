@@ -27,7 +27,7 @@ const projects = [
 
 export function ProjectContent() {
   return (
-    <div className="space-y-8">
+    <div className="flex flex-1 flex-col justify-center space-y-8">
       <header>
         <p className="font-mono text-xs tracking-widest text-emerald-400 sm:text-sm">
           PROJECT
@@ -38,7 +38,7 @@ export function ProjectContent() {
         </p>
       </header>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
         {projects.map((project) => (
           <article
             key={project.title}

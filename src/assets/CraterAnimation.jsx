@@ -1,306 +1,15 @@
-// import { useGLTF, useAnimations, Html } from "@react-three/drei";
-// import { useFrame } from "@react-three/fiber";
-// import * as THREE from "three";
-// import { useRef, useEffect, useState } from "react";
 
-// export function WalkingCharacter() {
-//   const { scene, animations } = useGLTF("/walking.glb");
-//   const { actions } = useAnimations(animations, scene);
-//   const characterRef = useRef();
-
-//   const [direction, setDirection] = useState({
-//     forward: false,
-//     back: false,
-//     left: false,
-//     right: false,
-//   });
-
-//   const [showDialog, setShowDialog] = useState("welcome");
-//   const [name, setName] = useState("");
-//   const [submitted, setSubmitted] = useState(false);
-//   const [selectedMenu, setSelectedMenu] = useState(null);
-
-//   const speed = 0.05;
-
-//   const allowedArea = [
-//     [4.5, 13],
-//     [2.5, 13],
-//     [2, 8],
-//     [2, 3],
-//     [4, 3],
-//     [5, 1],
-//     [8, -1],
-//     [12, 0],
-//     [13, 1],
-//     [14, 8],
-//     [14, 12],
-//     [6.5, 13],
-//     [6.5, 16],
-//     [8, 16],
-//     [15, 16],
-//     [14, 20],
-//     [10.5, 25.5],
-//     [0, 25],
-//     [-3, 20.4],
-//     [-8, 20.4],
-//     [-8, 23.5],
-//     [-9, 23.5],
-//     [-9, 15],
-//     [-8, 15],
-//     [-8, 18],
-//     [-3, 18],
-//     [5, 18],
-//     [4, 14],
-//   ];
-
-//   const slopeArea = [
-//     [5, 11],
-//     [4, 14],
-//     [5, 18],
-//     [8, 20],
-//     [7, 15],
-//     [5, 11],
-//   ];
-
-//   const isInsidePolygon = (point, polygon) => {
-//     const [x, z] = point;
-//     let inside = false;
-//     for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-//       const [xi, zi] = polygon[i];
-//       const [xj, zj] = polygon[j];
-//       const intersect =
-//         zi > z !== zj > z && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi;
-//       if (intersect) inside = !inside;
-//     }
-//     return inside;
-//   };
-
-//   // Keyboard controls
-//   useEffect(() => {
-//     const handleKeyDown = (e) => {
-//       switch (e.key.toLowerCase()) {
-//         case "w":
-//           setDirection((d) => ({ ...d, forward: true }));
-//           break;
-//         case "s":
-//           setDirection((d) => ({ ...d, back: true }));
-//           break;
-//         case "a":
-//           setDirection((d) => ({ ...d, left: true }));
-//           break;
-//         case "d":
-//           setDirection((d) => ({ ...d, right: true }));
-//           break;
-//       }
-//     };
-//     const handleKeyUp = (e) => {
-//       switch (e.key.toLowerCase()) {
-//         case "w":
-//           setDirection((d) => ({ ...d, forward: false }));
-//           break;
-//         case "s":
-//           setDirection((d) => ({ ...d, back: false }));
-//           break;
-//         case "a":
-//           setDirection((d) => ({ ...d, left: false }));
-//           break;
-//         case "d":
-//           setDirection((d) => ({ ...d, right: false }));
-//           break;
-//       }
-//     };
-//     window.addEventListener("keydown", handleKeyDown);
-//     window.addEventListener("keyup", handleKeyUp);
-//     return () => {
-//       window.removeEventListener("keydown", handleKeyDown);
-//       window.removeEventListener("keyup", handleKeyUp);
-//     };
-//   }, []);
-
-//   // Main animation
-//   useEffect(() => {
-//     const name = animations[0]?.name;
-//     const action = actions[name];
-//     if (action) {
-//       action.reset().fadeIn(0.3).play();
-//     }
-//   }, [actions, animations]);
-
-//   // Pause/resume animation
-//   useEffect(() => {
-//     const name = animations[0]?.name;
-//     const action = actions[name];
-//     if (!action) return;
-
-//     const isMoving =
-//       direction.forward || direction.back || direction.left || direction.right;
-
-//     action.paused = !isMoving;
-//     if (isMoving) action.play();
-//   }, [direction, actions, animations]);
-
-// const getTerrainHeight = (x, z) => {
-//   const inSlope = isInsidePolygon([x, z], slopeArea);
-
-//   let height;
-
-//   if (inSlope) {
-//     if (z < 11) height = 1.5;
-//     else if (z < 13) height = 1.5 - 0.5 * ((z - 11) / 2);
-//     else if (z < 15) height = 1 - (z - 13) / 2;
-//     else if (z < 17) height = -((z - 15) / 1) * 2;
-//     else height = -2;
-//   } else {
-//     height = z < 13 ? 1.5 : -2;
-//   }
-
-//   // Cegah turun lebih dari -2
-//   return Math.max(height, -2);
-// };
-
-//   // const getTerrainHeight = (x, z) => {
-//   //   const inSlope = isInsidePolygon([x, z], slopeArea);
-
-//   //   if (inSlope) {
-//   //     if (z < 11) return 1.5;
-//   //     if (z < 13) return 1.5 - 0.5 * ((z - 11) / 2);
-//   //     if (z < 15) return 1 - (z - 13) / 2;
-//   //     if (z < 17) return -((z - 15) / 1) * 2;
-//   //     return -2;
-//   //   }
-
-//   //   return z < 13 ? 1.5 : -2;
-//   // };
-
-//   // Movement
-//   useFrame(() => {
-//     const character = characterRef.current;
-//     if (!character) return;
-
-//     const moveVector = new THREE.Vector3();
-//     if (direction.forward) moveVector.z -= 1;
-//     if (direction.back) moveVector.z += 1;
-//     if (direction.left) moveVector.x -= 1;
-//     if (direction.right) moveVector.x += 1;
-
-//     if (moveVector.lengthSq() > 0) {
-//       moveVector.normalize().multiplyScalar(speed);
-//       const nextPos = character.position.clone().add(moveVector);
-
-//       if (isInsidePolygon([nextPos.x, nextPos.z], allowedArea)) {
-//         nextPos.y = getTerrainHeight(nextPos.x, nextPos.z);
-//         character.position.copy(nextPos);
-
-//         const angle = Math.atan2(moveVector.x, moveVector.z);
-//         character.rotation.y = angle;
-//       }
-//     }
-//   });
-
-// useEffect(() => {
-//   const handleDir = (e) => {
-//     const dir = e.type.replace("move-", "");
-//     setDirection((prev) => ({ ...prev, [dir]: e.detail }));
-//   };
-
-//   const dirs = ["forward", "back", "left", "right"];
-//   dirs.forEach((dir) => {
-//     window.addEventListener(`move-${dir}`, handleDir);
-//   });
-
-//   return () => {
-//     dirs.forEach((dir) => {
-//       window.removeEventListener(`move-${dir}`, handleDir);
-//     });
-//   };
-// }, []);
-
-//   // Handle input submit (Enter key)
-//   const handleSubmit = () => {
-//     if (name.trim() !== "") {
-//       setSubmitted(true);
-//       setShowDialog(false);
-//     }
-//   };
-
-//     const handleMenuClick = (menu) => {
-//     setSelectedMenu(menu);
-//     setShowDialog(" ");
-//   };
-
-//   return (
-//     <group
-//       ref={characterRef}
-//       position={[8, -2, 23]}
-
-//       scale={0.8}
-//       onClick={() => {setShowDialog("menu"); setSelectedMenu(null);}}
-//     >
-//       <primitive object={scene} />
-//       <Html
-//         position={[0, 6, 0]}
-//         center
-//         distanceFactor={10}
-//         style={{
-//           color: "white",
-//           fontSize: "20px",
-//           minWidth: "200px",
-//           textAlign: "center",
-//         }}
-//       >
-//       {showDialog === "welcome" &&(
-//           <div style={{ background: "rgba(0,0,0,0.7)" , padding: "6px 10px",
-//           borderRadius: "8px",}}>
-//             Hallo selamat datang 👋
-//             <br />
-//             Zoom out dan klik karakter untuk mulai interaksi
-//           </div>
-//         )}
-//       {showDialog === "menu"  &&(
-//           <div style={{ background: "rgba(0,0,0,0.7)", padding: "6px 10px",
-//           borderRadius: "8px",}}>
-//             <div style={{ marginBottom: "10px", fontWeight: "bold"   }}>
-//               Mana yang ingin kamu kunjungi?
-//             </div>
-//             <div
-//               style={{
-//                 display: "flex",
-//                 flexDirection: "column",
-//                 gap: "8px",
-//               }}
-//             >
-//               {["Home", "About", "Project", "Contact"].map((menu) => (
-//                 <button
-//                   key={menu}
-//                   onClick={() => handleMenuClick(menu)} // klik salah satu → langsung hilang
-//                   style={{
-//                     padding: "6px 10px",
-//                     borderRadius: "6px",
-//                     border: "none",
-//                     background: "#4caf50",
-//                     color: "white",
-//                     cursor: "pointer",
-//                     fontSize: "16px",
-//                   }}
-//                 >
-//                   {menu}
-//                 </button>
-//               ))}
-//             </div>
-//           </div>
-//         )}
-
-//       </Html>
-//     </group>
-//   );
-// }
 
 import { useGLTF, useAnimations, Html } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useRef, useEffect, useState } from "react";
+import {useIsDesktop} from "../../src/3Dpage/AnimationPage"
+useGLTF.preload("/walking.glb");
 
-const DIALOG_SCALE = 1.5;
+const MOBILE_dialog = { scale: 2, position: [0, 7, 0] };
+const DESKTOP_dialog = { scale: 1.5, position:[0, 5, 0] };
+
 
 const LOOK_TARGETS = {
   Home: [13, 0, 15],
@@ -309,10 +18,13 @@ const LOOK_TARGETS = {
   Contact: [3, 0, 5],
 };
 
-export function WalkingCharacter() {
+export function WalkingCharacter({ hideDialog = false }) {
   const { scene, animations } = useGLTF("/walking.glb");
   const { actions } = useAnimations(animations, scene);
   const characterRef = useRef();
+  const isDesktop = useIsDesktop()
+  const DIALOG = isDesktop ?  DESKTOP_dialog :MOBILE_dialog ;
+
 
   const [direction, setDirection] = useState({
     forward: false,
@@ -598,9 +310,10 @@ export function WalkingCharacter() {
     >
       <primitive object={scene} />
       <Html
-        position={[0, 6, 0]}
+        position={DIALOG.position}
         center
         distanceFactor={10}
+        zIndexRange={[9990, 0]}
         style={{
           color: "white",
           fontSize: "20px",
@@ -608,9 +321,10 @@ export function WalkingCharacter() {
           textAlign: "center",
         }}
       >
+        {!hideDialog && (
         <div
           style={{
-            transform: `scale(${DIALOG_SCALE})`,
+            transform: `scale(${DIALOG.scale})`,
             transformOrigin: "center",
           }}
         >
@@ -737,6 +451,7 @@ export function WalkingCharacter() {
           </div>
         )}
         </div>
+        )}
       </Html>
     </group>
   );

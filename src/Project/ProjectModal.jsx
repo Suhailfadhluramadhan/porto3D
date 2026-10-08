@@ -3,7 +3,7 @@ import { ProjectContent } from "./ProjectContent.jsx";
 
 export function ProjectModal({ onClose }) {
   return (
-    <Modal onClose={onClose} maxWidth="max-w-6xl">
+    <Modal onClose={onClose} maxWidth="w-full">
       <ProjectContent />
     </Modal>
   );
