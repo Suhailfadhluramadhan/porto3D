@@ -1,4 +1,6 @@
 import { useState } from "react";
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
 import { profile } from "../Home/profile.js";
 
 const contacts = [
@@ -20,7 +22,12 @@ export function KontakContent() {
   }
 
   return (
-    <div className="flex flex-1 flex-col justify-center space-y-8">
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="flex flex-1 flex-col justify-center space-y-8"
+    >
       <header>
         <p className="font-mono text-xs tracking-widest text-emerald-400 sm:text-sm">
           CONTACT
@@ -108,7 +115,7 @@ export function KontakContent() {
           </p>
         </section>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

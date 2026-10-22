@@ -1,3 +1,5 @@
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
 import { profile } from "../Home/profile.js";
 
 const skills = [
@@ -31,7 +33,12 @@ const experiences = [
 
 export function AboutContent() {
   return (
-    <div className="flex flex-1 flex-col justify-center space-y-9">
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="flex flex-1 flex-col justify-center space-y-9"
+    >
       <header>
         <p className="font-mono text-xs tracking-widest text-emerald-400 sm:text-sm">
           ABOUT ME
@@ -99,7 +106,7 @@ export function AboutContent() {
           ))}
         </ul>
       </section>
-    </div>
+    </motion.div>
   );
 }
 

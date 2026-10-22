@@ -1,3 +1,6 @@
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
+
 const projects = [
   {
     title: "Project 1",
@@ -27,7 +30,12 @@ const projects = [
 
 export function ProjectContent() {
   return (
-    <div className="flex flex-1 flex-col justify-center space-y-8">
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="flex flex-1 flex-col justify-center space-y-8"
+    >
       <header>
         <p className="font-mono text-xs tracking-widest text-emerald-400 sm:text-sm">
           PROJECT
@@ -79,10 +87,10 @@ export function ProjectContent() {
                 </a>
               </div>
             </div>
-          </article>
-        ))}
+        </article>
+      ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
