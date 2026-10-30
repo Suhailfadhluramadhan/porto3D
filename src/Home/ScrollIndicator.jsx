@@ -5,12 +5,35 @@ import { motion } from "framer-motion";
 export function ScrollIndicator() {
   const [ready, setReady] = useState(false); // muncul pertama kali setelah jeda
   const [isScrolling, setIsScrolling] = useState(false);
+  const [atSpecialization, setAtSpecialization] = useState(false);
 
   // muncul pertama kali setelah 1.5 detik (pengganti delay)
   useEffect(() => {
     const t = setTimeout(() => setReady(true), 1500);
     return () => clearTimeout(t);
   }, []);
+
+  // sembunyikan saat sampai ke section Specialization
+ useEffect(() => {
+  let observer;
+  let tries = 0;
+
+  const attach = () => {
+    const el = document.getElementById("specialization-section");
+    if (!el) {
+      if (tries++ < 20) setTimeout(attach, 100);
+      return;
+    }
+    observer = new IntersectionObserver(
+      ([entry]) => setAtSpecialization(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+  };
+
+  attach();
+  return () => observer?.disconnect();
+}, []);
 
   // deteksi scroll (window maupun container scroll di dalam modal)
   useEffect(() => {
@@ -32,7 +55,7 @@ export function ScrollIndicator() {
     };
   }, []);
 
-  const visible = ready && !isScrolling;
+  const visible = ready && !isScrolling && !atSpecialization;
 
   return (
     <motion.div

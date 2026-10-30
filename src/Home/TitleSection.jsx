@@ -1,5 +1,4 @@
-import { useRef } from "react";
-// eslint-disable-next-line no-unused-vars
+import { useRef, forwardRef } from "react";
 import { motion, useScroll, useTransform, useSpring, useMotionTemplate } from "framer-motion";
 
 const STROKE = "#34d399";
@@ -9,7 +8,7 @@ const HEADING_STYLE = {
   lineHeight: 1.3,
 };
 
-export function TitleSection({ containerRef }) {
+export const TitleSection = forwardRef(function TitleSection({ containerRef }, ref) {
   const titleRef = useRef(null);
 
   const { scrollYProgress: titleProgress } = useScroll({
@@ -18,17 +17,18 @@ export function TitleSection({ containerRef }) {
     offset: ["start start", "end end"],
   });
 
-  const titleOpacity = useTransform(titleProgress, [0, 0.25], [0, 1]);
-  const titleScale = useTransform(titleProgress, [0, 0.3], [0.6, 1]);
-  const titleBlurPx = useTransform(titleProgress, [0, 0.3], [16, 0]);
+  const titleOpacity = useTransform(titleProgress, [0, 0.2, 0.9, 1], [0, 1, 1, 0]);
+  const titleScale   = useTransform(titleProgress, [0, 0.25, 0.9, 1], [0.6, 1, 1, 0.6]);
+  const titleBlurPx  = useTransform(titleProgress, [0, 0.25], [16, 0]);
   const titleFilter = useMotionTemplate`blur(${titleBlurPx}px)`;
 
-  const drawn = useTransform(titleProgress, [0.35, 0.85], [0, 1]);
+  const drawn = useTransform(titleProgress, [0.25, 0.65], [0, 1]);
+ const circleOpacity = useTransform(titleProgress, [0.25, 0.26], [0, 1]);
   const pathLength = useSpring(drawn, { stiffness: 100, damping: 25 });
-  const circleOpacity = useTransform(titleProgress, [0.35, 0.36], [0, 1]);
+  
 
   return (
-    <section ref={titleRef} className="relative -mt-[100vh] h-[200vh]">
+    <section ref={(el) => { titleRef.current = el; if (ref) ref.current = el; }} className="relative -mt-[100vh] h-[200vh]">
       <div className="sticky top-0 flex h-screen items-center justify-center px-4">
         <motion.h2
           style={{
@@ -37,11 +37,11 @@ export function TitleSection({ containerRef }) {
             scale: titleScale,
             filter: titleFilter,
           }}
-          className="text-center font-extrabold text-slate-200"
+          className="text-center  font-serif font-extrabold text-slate-200"
         >
           Creative Developer Based In
           <br />
-          <span className="relative inline-block px-2">
+          <span className=" font-serif relative inline-block px-2">
             Indonesia
             <svg
               viewBox="0 0 400 140"
@@ -62,4 +62,4 @@ export function TitleSection({ containerRef }) {
       </div>
     </section>
   );
-}
+});
