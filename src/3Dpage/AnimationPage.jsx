@@ -14,7 +14,7 @@ import StoneGirl from "../assets/StoneGirl.jsx";
 import CloudLooper from "../assets/CloudAnimation.jsx";
 import CloudLayer from "../assets/Cloud.jsx";
 import Moon from "../assets/Moon.jsx";
-import { Suspense, useState, useEffect, useCallback } from "react";
+import { Suspense, useState, useEffect, useCallback,useRef } from "react";
 
 function Island(props) {
   const { scene } = useGLTF("/IslandNew.glb");
@@ -213,15 +213,16 @@ function SceneContent({
   onKontakOpen,
   hideDialog,
 }) {
+ const characterRef = useRef();
   return (
     <>
       <group position={[10, 15, 0]}>
         <Island scale={0.3} />
-        <WalkingCharacter hideDialog={hideDialog} />
-        <Cest isProfileOpen={isProfileOpen} onProfileOpen={onProfileOpen} />
-        <Tree onOpen={onKontakOpen} />
-        <Farmer onOpen={onAboutOpen} />
-        <StoneGirl onOpen={onProjectOpen} />
+        <WalkingCharacter characterRef={characterRef} hideDialog={hideDialog} />
+        <Cest characterRef={characterRef} isProfileOpen={isProfileOpen} onProfileOpen={onProfileOpen} />
+        <Tree characterRef={characterRef} onOpen={onKontakOpen} />
+        <Farmer characterRef={characterRef} onOpen={onAboutOpen} />
+        <StoneGirl characterRef={characterRef} onOpen={onProjectOpen} />
         <FlyingDragon />
         <CloudLooper direction="right-to-left" />
         <CloudLooper direction="left-to-right" />
